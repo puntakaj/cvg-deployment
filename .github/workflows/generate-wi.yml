@@ -1,0 +1,41 @@
+name: WI - GENERATE
+
+on:
+  push:
+    tags:
+      - 'SP*'
+    # branches:
+    #   - 'main'
+
+env:
+  tag: ${{ github.ref_name }}
+
+jobs:
+  create-wi:
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Tag name
+        run: echo "Create wi tag name ${{env.tag}}"
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+        
+      - name: Build WI document
+        run: |
+          pip install python-docx
+          python .github/wi-template.py "${{ env.tag }}"
+  
+      - name: Upload ${{env.tag}} as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WI_GEN_${{env.tag}}
+          path: |
+            wi-${{env.tag}}.docx
+            sprint/${{env.tag}}/
