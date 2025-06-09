@@ -70,18 +70,26 @@ def clean_to_db(file_list):
 
 
 def main():
+    dba_folders = glob.glob(f"./sprint/{tag}/*/DBA")
+    apo_folders = glob.glob(f"./sprint/{tag}/*/APO")
     doc.add_heading("Work Instruction Template", 0)
 
     doc.add_heading('SIR Name', level=2)
     doc.add_paragraph(f"{tag}_Enhance_CVG_Microservice_and_Fix_bug").runs[0].font.size = Pt(10)
 
-    folder_path_dba = f"./sprint/{tag}/*/DBA"
-    print(f"Find : {folder_path_dba}")
-    files_dba = read_all_files(folder_path_dba)
+    if not dba_folders:
+        print("No DBA folders found.")
+    else:
+        for folder_path_dba in dba_folders:
+            print(f"Found DBA folder: {folder_path_dba}")
+            files_dba = read_all_files(folder_path_dba)
 
-    folder_path_apo = f"./sprint/{tag}/*/APO"
-    print(f"Find : {folder_path_apo}")
-    files_apo = read_all_files(folder_path_apo)
+    if not apo_folders:
+        print("No APO folders found.")
+    else:
+        for folder_path_apo in apo_folders:
+            print(f"Found APO folder: {folder_path_apo}")
+            files_apo = read_all_files(folder_path_apo)
 
     files_impact = combine_impact_db(files_dba + files_apo)
 
