@@ -75,7 +75,7 @@ def clean_to_db(file_list):
 
 
 # create_impact_table
-def create_impact_table(doc,sir_name,files_impact)
+def create_impact_table(doc,sir_name,files_impact):
     table = doc.add_table(rows=2, cols=2)
     table.style = 'Table Grid'
     
