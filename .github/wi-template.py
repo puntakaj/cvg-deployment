@@ -95,11 +95,12 @@ def create_impact_table(doc,sir_name,files_impact):
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
-        database_bold = paragraph_db.add_run("Database")
-        run.bold = True
-        paragraph_db.add_run("\n   CONVGPROD")
+        title_bold = paragraph_db.add_run("Database")
+        title_bold.bold = True
+        paragraph_db.add_run("\nCONVGPROD")
         for file_name in files_impact:
-            paragraph.add_run(f"\n- {file_name}")
+            db = paragraph_db.add_run(f"\n- {file_name}")
+            db.font.size = Pt(10)
 
 
 # create_document_table
