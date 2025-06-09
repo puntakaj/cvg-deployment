@@ -3,6 +3,8 @@ import sys
 import glob
 from docx import Document
 from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL
 
 
 tag = sys.argv[1]
@@ -35,16 +37,32 @@ def read_all_files(folder_path):
     return all_files
 
 
-def create_table(doc, title, records):
-    table = doc.add_table(rows=2, cols=1)
+# create_sql_table
+def create_sql_table(doc, title, records):
+    table = doc.add_table(rows=3, cols=2)
     table.style = 'Table Grid'
     
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = title
-    hdr_cells[0].paragraphs[0].runs[0].font.size = Pt(12)
+    hdr_cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    hdr_cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    hdr_cells[0].paragraphs[0].runs[0].font.bold = True
+    hdr_cells[0].merge(hdr_cells[1])
+
+    row1 = table.rows[1]
+    row1.cells[0].text = "SQL Script"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(10)
+    row1.cells[1].text = "Remark"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+    row1.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
     
     for filename in records:
-        data_cells = table.rows[1].cells
+        data_cells = table.rows[2].cells
         data_cells[0].text = '\n'.join(records)
         data_cells[0].paragraphs[0].runs[0].font.size = Pt(10)
 
@@ -71,41 +89,109 @@ def clean_to_db(file_list):
     return db
 
 
+# create_impact_table
+def create_impact_table(doc,sir_name,files_impact):
+    table = doc.add_table(rows=2, cols=2)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    row1.cells[0].text = "SIR Name"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+
+    row1.cells[1].text = "Impact"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+
+    row2 = table.rows[1]
+    row2.cells[0].text = sir_name
+    row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    if files_impact and len(files_impact) > 0:
+        paragraph_db = row2.cells[1].paragraphs[0]
+        title_bold = paragraph_db.add_run("Database")
+        title_bold.bold = True
+        paragraph_db.add_run("\nCONVGPROD")
+        for file_name in files_impact:
+            db = paragraph_db.add_run(f"\n- {file_name}")
+            db.font.size = Pt(10)
+
+
+# create_document_table
+def create_document_table(doc):
+    table = doc.add_table(rows=4, cols=4)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    row1.cells[0].text = "Document name :"
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[2].text = "WI_Convergence_YYYY-MM-DD.docx"
+    row1.cells[0].merge(row1.cells[1])
+    row1.cells[2].merge(row1.cells[3])
+    
+    row2 = table.rows[1]
+    row2.cells[0].text = "Created by :"
+    row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    row2.cells[1].text = ""
+    row2.cells[2].text = "Created Date :"
+    row2.cells[2].paragraphs[0].runs[0].font.bold = True
+    row2.cells[3].text = "DD/MM/YYYY"
+    
+    row3 = table.rows[2]
+    row3.cells[0].text = "Company :"
+    row3.cells[0].paragraphs[0].runs[0].font.bold = True
+    row3.cells[1].text = "MIMO Tech."
+    row3.cells[2].text = "Department :"
+    row3.cells[2].paragraphs[0].runs[0].font.bold = True
+    row3.cells[3].text = "BAIC"
+    
+    row4 = table.rows[3]
+    row4.cells[0].text = "On Production Date :"
+    row4.cells[0].paragraphs[0].runs[0].font.bold = True
+    row4.cells[1].text = "DD/MM/YYYY"
+    row4.cells[2].text = "Telephone :"
+    row4.cells[2].paragraphs[0].runs[0].font.bold = True
+    row4.cells[3].text = ""
+
+
 def main():
     dba_folders = glob.glob(f"./sprint/{tag}/*/DBA")
     apo_folders = glob.glob(f"./sprint/{tag}/*/APO")
+
     doc.add_heading("Work Instruction Template", 0)
+    create_document_table(doc)
 
-    doc.add_heading('SIR Name', level=2)
-    doc.add_paragraph(f"{tag}_Enhance_CVG_Microservice_and_Fix_bug").runs[0].font.size = Pt(10)
-
-    if not dba_folders:
-        print("No DBA folders found.")
-    else:
-        for folder_path_dba in dba_folders:
-            print(f"Found DBA folder: {folder_path_dba}")
-            files_dba = read_all_files(folder_path_dba)
+    sir_name = (f"{tag}_Enhance_CVG_Microservice_and_Fix_bug")
 
     if not apo_folders:
         print("No APO folders found.")
+        files_apo = []
     else:
         for folder_path_apo in apo_folders:
             print(f"Found APO folder: {folder_path_apo}")
             files_apo = read_all_files(folder_path_apo)
 
+    if not dba_folders:
+        print("No DBA folders found.")
+        files_dba = []
+    else:
+        for folder_path_dba in dba_folders:
+            print(f"Found DBA folder: {folder_path_dba}")
+            files_dba = read_all_files(folder_path_dba)
+
     files_impact = combine_impact_db(files_dba + files_apo)
 
-    if files_impact:
-        doc.add_heading('Impact', level=2)
-        create_table(doc, "Database", files_impact)
+    doc.add_heading('Impact', level=2)
+    create_impact_table(doc,sir_name,files_impact)
 
     if files_dba:
         doc.add_heading('Database - DBA', level=2)
-        create_table(doc, "SQL Script", files_dba)
+        create_sql_table(doc, "DBA", files_dba)
 
     if files_apo:
         doc.add_heading('Database - APO', level=2)
-        create_table(doc, "SQL Script", files_apo)
+        create_sql_table(doc, "APO", files_apo)
 
     wi_filename = f"wi-{tag}.docx"
     doc.save(wi_filename)
