@@ -70,36 +70,42 @@ def clean_to_db(file_list):
     
     return db
 
-def create_document_table(doc):
-    table1 = doc.add_table(rows=1, cols=2)
-    table1.style = 'Table Grid'
-    row1 = table1.rows[0]
-    row1.cells[0].text = "Document name :"
-    row1.cells[1].text = ""
 
-    table2 = doc.add_table(rows=1, cols=4)
-    table2.style = 'Table Grid'
-    row2 = table2.rows[0]
+def create_document_table(doc):
+    table = doc.add_table(rows=4, cols=4)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    row1.cells[0].text = "Document name :"
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].merge(row1.cells[1])
+    row1.cells[2].text = "WI_Convergence_YYYY-MM-DD.docx"
+    row1.cells[2].merge(row1.cells[3])
+    
+    row2 = table.rows[1]
     row2.cells[0].text = "Created by :"
+    row2.cells[0].paragraphs[0].runs[0].font.bold = True
     row2.cells[1].text = ""
     row2.cells[2].text = "Created Date :"
-    row2.cells[3].text = ""
-
-    table3 = doc.add_table(rows=1, cols=4)
-    table3.style = 'Table Grid'
-    row3 = table3.rows[0]
+    row2.cells[2].paragraphs[0].runs[0].font.bold = True
+    row2.cells[3].text = "DD/MM/YYYY"
+    
+    row3 = table.rows[2]
     row3.cells[0].text = "Company :"
+    row3.cells[0].paragraphs[0].runs[0].font.bold = True
     row3.cells[1].text = "MIMO Tech."
     row3.cells[2].text = "Department :"
+    row3.cells[2].paragraphs[0].runs[0].font.bold = True
     row3.cells[3].text = "BAIC"
-
-    table4 = doc.add_table(rows=1, cols=4)
-    table4.style = 'Table Grid'
-    row4 = table4.rows[0]
+    
+    row4 = table.rows[3]
     row4.cells[0].text = "On Production Date :"
-    row4.cells[1].text = ""
+    row4.cells[0].paragraphs[0].runs[0].font.bold = True
+    row4.cells[1].text = "DD/MM/YYYY"
     row4.cells[2].text = "Telephone :"
+    row4.cells[2].paragraphs[0].runs[0].font.bold = True
     row4.cells[3].text = ""
+
 
 def main():
     dba_folders = glob.glob(f"./sprint/{tag}/*/DBA")
