@@ -62,7 +62,7 @@ def create_sql_table(doc, title, records):
     row1.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
     
     for filename in records:
-        data_cells = table.rows[3].cells
+        data_cells = table.rows[2].cells
         data_cells[0].text = '\n'.join(records)
         data_cells[0].paragraphs[0].runs[0].font.size = Pt(10)
 
