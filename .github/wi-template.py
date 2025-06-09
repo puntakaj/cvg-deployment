@@ -3,6 +3,8 @@ import sys
 import glob
 from docx import Document
 from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL
 
 
 tag = sys.argv[1]
@@ -35,7 +37,8 @@ def read_all_files(folder_path):
     return all_files
 
 
-def create_table(doc, title, records):
+# create_sql_table
+def create_sql_table(doc, title, records):
     table = doc.add_table(rows=2, cols=1)
     table.style = 'Table Grid'
     
@@ -71,8 +74,37 @@ def clean_to_db(file_list):
     return db
 
 
+# create_impact_table
+def create_impact_table(doc,sir_name,files_impact)
+    table = doc.add_table(rows=2, cols=2)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    row1.cells[0].text = "SIR Name"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+
+    row1.cells[1].text = "Impact"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+
+    row2 = table.rows[1]
+    row2.cells[0].text = "{sir_name}"
+    row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    if files_impact and len(files_impact) > 0:
+        paragraph_db = row2.cells[1].paragraphs[0]
+        database_bold = paragraph_db.add_run("Database")
+        run.bold = True
+        paragraph_db.add_run("\n   CONVGPROD")
+        for file_name in files_impact:
+            paragraph.add_run(f"\n- {file_name}")
+
+
+# create_document_table
 def create_document_table(doc):
-    table = doc.add_table(rows=4, cols=4)
+    table = doc.add_table(rows=2, cols=2)
     table.style = 'Table Grid'
     
     row1 = table.rows[0]
@@ -114,8 +146,7 @@ def main():
     doc.add_heading("Work Instruction Template", 0)
     create_document_table(doc)
 
-    doc.add_heading('SIR Name', level=2)
-    doc.add_paragraph(f"{tag}_Enhance_CVG_Microservice_and_Fix_bug").runs[0].font.size = Pt(10)
+    sir_name = (f"{tag}_Enhance_CVG_Microservice_and_Fix_bug")
 
     if not dba_folders:
         print("No DBA folders found.")
@@ -135,17 +166,16 @@ def main():
 
     files_impact = combine_impact_db(files_dba + files_apo)
 
-    if files_impact:
-        doc.add_heading('Impact', level=2)
-        create_table(doc, "Database", files_impact)
+    doc.add_heading('Impact', level=2)
+    create_impact_table(doc,sir_name,files_impact)
 
     if files_dba:
         doc.add_heading('Database - DBA', level=2)
-        create_table(doc, "SQL Script", files_dba)
+        create_sql_table(doc, "SQL Script", files_dba)
 
     if files_apo:
         doc.add_heading('Database - APO', level=2)
-        create_table(doc, "SQL Script", files_apo)
+        create_sql_table(doc, "SQL Script", files_apo)
 
     wi_filename = f"wi-{tag}.docx"
     doc.save(wi_filename)
