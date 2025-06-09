@@ -81,6 +81,7 @@ def main():
 
     if not dba_folders:
         print("No DBA folders found.")
+        files_dba = []
     else:
         for folder_path_dba in dba_folders:
             print(f"Found DBA folder: {folder_path_dba}")
@@ -88,6 +89,7 @@ def main():
 
     if not apo_folders:
         print("No APO folders found.")
+        files_apo = []
     else:
         for folder_path_apo in apo_folders:
             print(f"Found APO folder: {folder_path_apo}")
