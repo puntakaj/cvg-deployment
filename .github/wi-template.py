@@ -164,14 +164,6 @@ def main():
 
     sir_name = (f"{tag}_Enhance_CVG_Microservice_and_Fix_bug")
 
-    if not dba_folders:
-        print("No DBA folders found.")
-        files_dba = []
-    else:
-        for folder_path_dba in dba_folders:
-            print(f"Found DBA folder: {folder_path_dba}")
-            files_dba = read_all_files(folder_path_dba)
-
     if not apo_folders:
         print("No APO folders found.")
         files_apo = []
@@ -179,6 +171,14 @@ def main():
         for folder_path_apo in apo_folders:
             print(f"Found APO folder: {folder_path_apo}")
             files_apo = read_all_files(folder_path_apo)
+
+    if not dba_folders:
+        print("No DBA folders found.")
+        files_dba = []
+    else:
+        for folder_path_dba in dba_folders:
+            print(f"Found DBA folder: {folder_path_dba}")
+            files_dba = read_all_files(folder_path_dba)
 
     files_impact = combine_impact_db(files_dba + files_apo)
 
