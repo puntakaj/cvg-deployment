@@ -72,11 +72,13 @@ def clean_to_db(file_list):
 
 def create_document_table(doc):
     table1 = doc.add_table(rows=1, cols=2)
+    table1.style = 'Table Grid'
     row1 = table1.rows[0]
     row1.cells[0].text = "Document name :"
     row1.cells[1].text = ""
 
     table2 = doc.add_table(rows=1, cols=4)
+    table2.style = 'Table Grid'
     row2 = table2.rows[0]
     row2.cells[0].text = "Created by :"
     row2.cells[1].text = ""
@@ -84,6 +86,7 @@ def create_document_table(doc):
     row2.cells[3].text = ""
 
     table3 = doc.add_table(rows=1, cols=4)
+    table3.style = 'Table Grid'
     row3 = table3.rows[0]
     row3.cells[0].text = "Company :"
     row3.cells[1].text = "MIMO Tech."
@@ -91,6 +94,7 @@ def create_document_table(doc):
     row3.cells[3].text = "BAIC"
 
     table4 = doc.add_table(rows=1, cols=4)
+    table4.style = 'Table Grid'
     row4 = table4.rows[0]
     row4.cells[0].text = "On Production Date :"
     row4.cells[1].text = ""
