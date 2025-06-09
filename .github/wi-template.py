@@ -75,11 +75,11 @@ def main():
     doc.add_heading('SIR Name', level=2)
     doc.add_paragraph(f"{tag}_Enhance_CVG_Microservice_and_Fix_bug").runs[0].font.size = Pt(10)
 
-    folder_path_dba = f"./sprint/{tag}/DBA"
+    folder_path_dba = f"./sprint/{tag}/*/DBA"
     print(f"Find : {folder_path_dba}")
     files_dba = read_all_files(folder_path_dba)
 
-    folder_path_apo = f"./sprint/{tag}/APO"
+    folder_path_apo = f"./sprint/{tag}/*/APO"
     print(f"Find : {folder_path_apo}")
     files_apo = read_all_files(folder_path_apo)
 
