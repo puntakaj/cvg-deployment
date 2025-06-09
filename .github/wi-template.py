@@ -44,9 +44,9 @@ def create_sql_table(doc, title, records):
     
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = title
-    hdr_cells.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-    hdr_cells.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-    hdr_cells.paragraphs[0].runs[0].font.bold = True
+    hdr_cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    hdr_cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    hdr_cells[0].paragraphs[0].runs[0].font.bold = True
     hdr_cells[0].merge(hdr_cells[1])
 
     row1 = table.rows[1]
