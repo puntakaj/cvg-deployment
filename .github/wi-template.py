@@ -110,8 +110,8 @@ def create_document_table(doc):
     row1 = table.rows[0]
     row1.cells[0].text = "Document name :"
     row1.cells[0].paragraphs[0].runs[0].font.bold = True
-    row1.cells[0].merge(row1.cells[1])
     row1.cells[2].text = "WI_Convergence_YYYY-MM-DD.docx"
+    row1.cells[0].merge(row1.cells[1])
     row1.cells[2].merge(row1.cells[3])
     
     row2 = table.rows[1]
