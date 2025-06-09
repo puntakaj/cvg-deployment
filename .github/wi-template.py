@@ -39,15 +39,30 @@ def read_all_files(folder_path):
 
 # create_sql_table
 def create_sql_table(doc, title, records):
-    table = doc.add_table(rows=2, cols=1)
+    table = doc.add_table(rows=3, cols=2)
     table.style = 'Table Grid'
     
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = title
-    hdr_cells[0].paragraphs[0].runs[0].font.size = Pt(12)
+    hdr_cells.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    hdr_cells.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    hdr_cells.paragraphs[0].runs[0].font.bold = True
+    hdr_cells[0].merge(hdr_cells[1])
+
+    row1 = table.rows[1]
+    row1.cells[0].text = "SQL Script"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(10)
+    row1.cells[1].text = "Remark"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+    row1.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
     
     for filename in records:
-        data_cells = table.rows[1].cells
+        data_cells = table.rows[3].cells
         data_cells[0].text = '\n'.join(records)
         data_cells[0].paragraphs[0].runs[0].font.size = Pt(10)
 
@@ -91,7 +106,7 @@ def create_impact_table(doc,sir_name,files_impact):
     row1.cells[1].paragraphs[0].runs[0].font.bold = True
 
     row2 = table.rows[1]
-    row2.cells[0].text = "{sir_name}"
+    row2.cells[0].text = sir_name
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
@@ -172,11 +187,11 @@ def main():
 
     if files_dba:
         doc.add_heading('Database - DBA', level=2)
-        create_sql_table(doc, "SQL Script", files_dba)
+        create_sql_table(doc, "DBA", files_dba)
 
     if files_apo:
         doc.add_heading('Database - APO', level=2)
-        create_sql_table(doc, "SQL Script", files_apo)
+        create_sql_table(doc, "APO", files_apo)
 
     wi_filename = f"wi-{tag}.docx"
     doc.save(wi_filename)
