@@ -1,7 +1,9 @@
 import os
 import sys
+import glob
 from docx import Document
 from docx.shared import Pt
+
 
 tag = sys.argv[1]
 doc = Document()
