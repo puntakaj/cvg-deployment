@@ -104,7 +104,7 @@ def create_impact_table(doc,sir_name,files_impact):
 
 # create_document_table
 def create_document_table(doc):
-    table = doc.add_table(rows=2, cols=2)
+    table = doc.add_table(rows=4, cols=4)
     table.style = 'Table Grid'
     
     row1 = table.rows[0]
