@@ -1,0 +1,43 @@
+name: Export Script Files to Artifact
+
+on:
+  push:
+    branches: 
+      - sit
+      - main
+
+jobs:
+  save-branch-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Get changed files and copy
+      run: |
+        if git show --pretty=format:"%P" -s HEAD | grep -q " "; then
+          git diff --name-only HEAD^1 HEAD^2 > sql.txt
+        else
+          git diff --name-only HEAD~1 HEAD > sql.txt
+        fi
+
+        echo "Changed files:"
+        cat sql.txt
+
+        # Create directory to collect files
+        mkdir -p sql_upload
+
+        # Copy changed files into that directory
+        while read -r file; do
+          mkdir -p "sql_upload/$(dirname "$file")"
+          cp --parents "$file" sql_upload/
+        done < sql.txt
+
+    - name: Upload changed files as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: script
+        path: sql_upload/
