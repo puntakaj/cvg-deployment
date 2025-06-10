@@ -39,6 +39,7 @@ jobs:
             cp --parents "$file" sql_upload/
           else
             echo "File not found: $file"
+          fi
         done < sql.txt
 
     - name: Upload script files as artifact
