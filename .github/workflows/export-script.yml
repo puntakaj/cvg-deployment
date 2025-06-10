@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  save-branch-files:
+  export-files:
     runs-on: ubuntu-latest
     
     steps:
@@ -16,7 +16,7 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Get changed files and copy
+    - name: Get files script
       run: |
         if git show --pretty=format:"%P" -s HEAD | grep -q " "; then
           git diff --name-only HEAD^1 HEAD^2 > sql.txt
@@ -36,7 +36,7 @@ jobs:
           cp --parents "$file" sql_upload/
         done < sql.txt
 
-    - name: Upload changed files as artifact
+    - name: Upload script files as artifact
       uses: actions/upload-artifact@v4
       with:
         name: script
