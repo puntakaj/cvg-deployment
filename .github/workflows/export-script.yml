@@ -29,19 +29,16 @@ jobs:
         echo "Changed files:"
         cat sql.txt
 
-        # Check if there are any .sql files
-        if [ ! -s sql.txt ]; then
-          echo "No .sql files to upload."
-          exit 0
-        fi
-
         # Create directory to collect files
         mkdir -p sql_upload
 
         # Copy changed files into that directory
         while read -r file; do
-          mkdir -p "sql_upload/$(dirname "$file")"
-          cp --parents "$file" sql_upload/
+          if [ -f "$file" ]; then
+            mkdir -p "sql_upload/$(dirname "$file")"
+            cp --parents "$file" sql_upload/
+          else
+            echo "File not found: $file"
         done < sql.txt
 
     - name: Upload script files as artifact
