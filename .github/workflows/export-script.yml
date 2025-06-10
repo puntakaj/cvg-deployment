@@ -24,10 +24,17 @@ jobs:
           git diff --name-only HEAD~1 HEAD > all_files.txt
         fi
 
+        # Add only sql file
         grep -iE '\.sql$' all_files.txt > sql.txt
 
         echo "Changed files:"
         cat sql.txt
+
+        # Check before process
+        if [ ! -s sql.txt ]; then
+          echo "No .sql files to upload."
+          exit 0
+        fi
 
         # Create directory to collect files
         mkdir -p sql_upload
