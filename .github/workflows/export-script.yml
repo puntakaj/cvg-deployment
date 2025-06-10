@@ -27,9 +27,6 @@ jobs:
         # Add only sql file
         grep -iE '\.sql$' all_files.txt > sql.txt
 
-        echo "Changed files:"
-        cat sql.txt
-
         # Check before process
         if [ ! -s sql.txt ]; then
           echo "No .sql files to upload."
