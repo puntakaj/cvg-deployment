@@ -168,17 +168,19 @@ def main():
         print("No APO folders found.")
         files_apo = []
     else:
+        files_apo = []
         for folder_path_apo in apo_folders:
             print(f"Found APO folder: {folder_path_apo}")
-            files_apo = read_all_files(folder_path_apo)
+            files_apo.extend(read_all_files(folder_path_apo))
 
     if not dba_folders:
         print("No DBA folders found.")
         files_dba = []
     else:
+        files_dba = []
         for folder_path_dba in dba_folders:
             print(f"Found DBA folder: {folder_path_dba}")
-            files_dba = read_all_files(folder_path_dba)
+            files_dba.extend(read_all_files(folder_path_dba))
 
     files_impact = combine_impact_db(files_dba + files_apo)
 
