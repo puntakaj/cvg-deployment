@@ -1,0 +1,73 @@
+name: Export Script Files to Artifact
+
+on:
+  push:
+    branches: 
+      - sit
+      - main
+
+jobs:
+  export-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Get files script
+      run: |
+        # Only run on merge commit
+        if git show --pretty=format:"%P" -s HEAD | grep -q " "; then
+          PARENT1=$(git rev-parse HEAD^1)
+          PARENT2=$(git rev-parse HEAD^2)
+          BASE=$(git merge-base $PARENT1 $PARENT2)
+          git diff --name-only $BASE $PARENT2 > all_files.txt
+        else
+          # Regular commit (non-merge)
+          git diff --name-only HEAD~1 HEAD > all_files.txt
+        fi
+
+        # Filter only SQL files
+        grep -iE '\.sql$' all_files.txt > sql.txt || echo "No SQL files found"
+
+        # Check SQL files
+        if [ ! -s sql.txt ]; then
+          echo "No .sql files to upload."
+          echo "Files changed in this push:"
+          cat all_files.txt
+          exit 0
+        fi
+
+        echo "SQL files to process:"
+        cat sql.txt
+
+        # Create directory to collect files
+        mkdir -p sql_upload
+
+        # Copy changed files into that directory
+        while IFS= read -r file; do
+          if [ -f "$file" ]; then
+            # Create the directory structure
+            target_dir="sql_upload/$(dirname "$file")"
+            mkdir -p "$target_dir"
+            
+            # Copy the file
+            cp "$file" "sql_upload/$file"
+            echo "Copied: $file"
+          else
+            echo "File not found: $file"
+          fi
+        done < sql.txt
+
+        echo "Contents of sql_upload directory:"
+        find sql_upload -type f
+
+    - name: Upload script files as artifact
+      uses: actions/upload-artifact@v4
+      # Only run if sql_upload directory exists and has files
+      if: hashFiles('sql_upload/**') != ''
+      with:
+        name: script
+        path: sql_upload/
