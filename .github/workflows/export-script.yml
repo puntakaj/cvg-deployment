@@ -18,16 +18,16 @@ jobs:
     
     - name: Get files script
       run: |
-        #  Only run on merge commit
-        # if git show --pretty=format:"%P" -s HEAD | grep -q " "; then
+        # Only run on merge commit
+        if git show --pretty=format:"%P" -s HEAD | grep -q " "; then
           PARENT1=$(git rev-parse HEAD^1)
           PARENT2=$(git rev-parse HEAD^2)
           BASE=$(git merge-base $PARENT1 $PARENT2)
           git diff --name-only $BASE $PARENT2 > all_files.txt
-        # else
-        #   # Regular commit (non-merge)
-        #   git diff --name-only HEAD~1 HEAD > all_files.txt
-        # fi
+        else
+          # Regular commit (non-merge)
+          git diff --name-only HEAD~1 HEAD > all_files.txt
+        fi
 
         # Filter only SQL files
         grep -iE '\.sql$' all_files.txt > sql.txt || echo "No SQL files found"
