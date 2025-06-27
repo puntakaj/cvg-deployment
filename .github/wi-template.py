@@ -64,9 +64,9 @@ def create_sql_table(doc, title, records):
     row1.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
     
     for filename in records:
-        data_cells = table.add_row()
-        data_cells[0].text = filename
-        data_cells[0].paragraphs[0].runs[0].font.size = Pt(10)
+        row = table.add_row()
+        row.cells[0].paragraphs[0].add_run(filename)
+        row.cells[0].size = Pt(10)
 
 
 def combine_impact_db(combined_list):
