@@ -1,17 +1,17 @@
 name: Generate Wi Template
-run-name: "Generate Wi Template : ${{ inputs.sprint }}"
+run-name: "Generate Wi Template : ${{ inputs.tag }}"
 
 on:
   workflow_dispatch:
     inputs:
-      sprint:
-        description: "Sprint name example: SPXX.X.X"
+      tag:
+        description: "Tag name example: SPXX.X.X"
         required: true
       repository-deploy:
-        description: "Repository deploy version in sprint example: cvg-new-postpaid-sync:v2.0.0;cvg-atn:v2.0.0;"
+        description: "Repository deploy version in tag example: cvg-new-postpaid-sync:v2.0.0;cvg-atn:v2.0.0;"
         required: false
       repository-rollback:
-        description: "Repository rollback version in sprint example: cvg-new-postpaid-sync:v1.0.0;cvg-atn:v1.0.0;"
+        description: "Repository rollback version in tag example: cvg-new-postpaid-sync:v1.0.0;cvg-atn:v1.0.0;"
         required: false
       common-deploy:
         description: 'Run CVG BE Common Deployment ?'
@@ -31,9 +31,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: develop
+      
+      - name: Check tag exists
+        run: |
+          TAG=${{ inputs.tag }}
+          echo "Checking if tag '$TAG' exists..."
+          
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Tag '$TAG' already exists continue build wi template"
+          else
+            echo "Tag '$TAG' does not exist"
+            exit 1
+          fi
     
-      - name: Create wi sprint name
-        run: echo "Create wi sprint name ${{inputs.sprint}}"
+      - name: Create wi tag name
+        run: echo "Create wi tag name ${{inputs.tag}}"
 
       - name: Setup python
         uses: actions/setup-python@v4
@@ -43,15 +55,15 @@ jobs:
       - name: Build WI Template
         run: |
           pip install python-docx
-          python .github/wi-template.py "${{ inputs.sprint }}" \
+          python .github/wi-template.py "${{ inputs.tag }}" \
                                         "${{ inputs.repository-deploy }}" \
                                         "${{ inputs.repository-rollback }}" \
                                         "${{ inputs.common-deploy }}"
       
-      - name: Upload ${{inputs.sprint}} as artifact
+      - name: Upload ${{inputs.tag}} as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: WI_GEN_${{inputs.sprint}}
+          name: WI_GEN_${{inputs.tag}}
           path: |
-            wi-${{inputs.sprint}}.docx
-            sprint/${{inputs.sprint}}/
+            wi-${{inputs.tag}}.docx
+            tag/${{inputs.tag}}/
