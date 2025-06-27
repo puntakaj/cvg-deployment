@@ -66,4 +66,4 @@ jobs:
           name: WI_GEN_${{inputs.tag}}
           path: |
             wi-${{inputs.tag}}.docx
-            tag/${{inputs.tag}}/
+            sprint/${{inputs.tag}}/
