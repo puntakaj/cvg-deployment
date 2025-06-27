@@ -1,4 +1,4 @@
-name: Export Script Files to Artifact
+name: Export Script Sql
 
 on:
   push:

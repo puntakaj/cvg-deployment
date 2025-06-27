@@ -6,9 +6,11 @@ from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_ALIGN_VERTICAL
 
-
-tag = sys.argv[1]
 doc = Document()
+tag = sys.argv[1]
+repos_deploy = sys.argv[2]
+repos_rollback = sys.argv[3]
+has_common_deploy = sys.argv[4]
 
 def read_all_files(folder_path):
     all_files = []
@@ -90,7 +92,7 @@ def clean_to_db(file_list):
 
 
 # create_impact_table
-def create_impact_table(doc,sir_name,files_impact):
+def create_impact_table(doc,sir_name,files_impact,repos_deploy):
     table = doc.add_table(rows=2, cols=2)
     table.style = 'Table Grid'
     
@@ -108,12 +110,24 @@ def create_impact_table(doc,sir_name,files_impact):
     row2 = table.rows[1]
     row2.cells[0].text = sir_name
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
+
+    if repos_deploy:
+        paragraph_repos = row2.cells[1].paragraphs[0]
+        title_bold = paragraph_repos.add_run("CVG Microservice")
+        title_bold.bold = True
+        repos = [item.split(":")[0] for item in repos_deploy.split(";") if item]
+        for repo_name in repos:
+            print(f"Adding repo: {repo_name}")
+            db = paragraph_db.add_run(f"\n- {repo_name}")
+            db.font.size = Pt(10)
+
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
         title_bold = paragraph_db.add_run("Database")
         title_bold.bold = True
         paragraph_db.add_run("\nCONVGPROD")
         for file_name in files_impact:
+            print(f"Adding db: {file_name}")
             db = paragraph_db.add_run(f"\n- {file_name}")
             db.font.size = Pt(10)
 
@@ -185,7 +199,7 @@ def main():
     files_impact = combine_impact_db(files_dba + files_apo)
 
     doc.add_heading('Impact', level=2)
-    create_impact_table(doc,sir_name,files_impact)
+    create_impact_table(doc,sir_name,files_impact,repos_deploy)
 
     if files_dba:
         doc.add_heading('Database - DBA', level=2)
