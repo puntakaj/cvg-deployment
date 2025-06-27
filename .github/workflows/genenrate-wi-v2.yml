@@ -8,11 +8,11 @@ on:
         description: "Sprint name example: SPXX.X.X"
         required: true
       repository-deploy:
-        description: "Repository deploy version in sprint example: cvg-new-postpaid-sync:v2.0.0;cvg-atn:v2.0.0"
-        required: true
+        description: "Repository deploy version in sprint example: cvg-new-postpaid-sync:v2.0.0;cvg-atn:v2.0.0;"
+        required: false
       repository-rollback:
-        description: "Repository rollback version in sprint example: cvg-new-postpaid-sync:v1.0.0;cvg-atn:v1.0.0"
-        required: true
+        description: "Repository rollback version in sprint example: cvg-new-postpaid-sync:v1.0.0;cvg-atn:v1.0.0;"
+        required: false
       common-deploy:
         description: 'Run CVG BE Common Deployment ?'
         required: true

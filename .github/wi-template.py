@@ -118,7 +118,7 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
         repos = [item.split(":")[0] for item in repos_deploy.split(";") if item]
         for repo_name in repos:
             print(f"Adding repo: {repo_name}")
-            db = paragraph_db.add_run(f"\n- {repo_name}")
+            db = paragraph_repos.add_run(f"\n- {repo_name}")
             db.font.size = Pt(10)
 
     if files_impact and len(files_impact) > 0:
