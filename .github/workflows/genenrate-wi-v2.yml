@@ -30,7 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
     
       - name: Create wi sprint name
         run: echo "Create wi sprint name ${{inputs.sprint}}"
