@@ -186,7 +186,7 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
 
 #create_destination_system_table
 def create_destination_system_table(repos_deploy):
-    table = doc.add_table(rows=2, cols=2)
+    table = doc.add_table(rows=2, cols=4)
     table.style = 'Table Grid'
     
     row1 = table.rows[0]
@@ -227,7 +227,7 @@ def create_destination_system_table(repos_deploy):
     if 'cvg-app-be' in repos_deploy or 'cvg-ap-gui' in repos_deploy:
         paragraph_domain.add_run("\ncvg-portal.intra.ais")
     row2.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
-    
+
 
 # create_document_table
 def create_document_table(doc):
