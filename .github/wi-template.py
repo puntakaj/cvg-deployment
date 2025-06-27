@@ -202,6 +202,7 @@ def create_repo_table(doc, repos, has_common_deploy):
 
     row3 = table.rows[2]
     row3.cells[0].text = "PRD - Deploy Microservices"
+    row3.cells[0].paragraphs[0].runs[0].font.bold = True
     row3.cells[1].text = "Y"
     row3.cells[1].paragraphs[0].runs[0].font.bold = True
     row3.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -220,7 +221,9 @@ def create_repo_table(doc, repos, has_common_deploy):
             aAt = paragraph_repos.add_run(f"{app_and_tag}\n")
             aAt.font.size = Pt(10)
 
-    paragraph_repos.add_run("\nFor Run Workflow\n")
+    frwText = paragraph_repos.add_run("\nFor Run Workflow\n")
+    frwText.font.size = Pt(10)
+    frwText.bold = True
     if cvg_app_gui:
         filtered_apps = [item for item in apps_and_tags if not item.startswith("cvg-app-gui")]
         repo = ";".join(filtered_apps) + ";"
@@ -232,6 +235,7 @@ def create_repo_table(doc, repos, has_common_deploy):
     if cvg_app_be:
         row4 = table.add_row()
         row4.cells[0].text = "PRD - CVG BFF Deploy"
+        row4.cells[0].paragraphs[0].runs[0].font.bold = True
         row4.cells[1].text = "Y"
         row4.cells[1].paragraphs[0].runs[0].font.bold = True
         row4.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -240,12 +244,15 @@ def create_repo_table(doc, repos, has_common_deploy):
         print(f"Adding repo and tag app be: {cvg_app_be}")
         beAt = paragraph_app_be.add_run(f"{cvg_app_be}\n")
         beAt.font.size = Pt(10)
-        paragraph_app_be.add_run("\nFor Run Workflow\n")
+        frwText = paragraph_app_be.add_run("\nFor Run Workflow\n")
+        frwText.font.size = Pt(10)
+        frwText.bold = True
         paragraph_app_be.add_run(f"{cvg_app_be.split(':')[1]};")
 
     if cvg_app_gui:
         row5 = table.add_row()
         row5.cells[0].text = "PRD - CVG Frontend Deploy"
+        row5.cells[0].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].text = "Y"
         row5.cells[1].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -254,18 +261,23 @@ def create_repo_table(doc, repos, has_common_deploy):
         print(f"Adding repo and tag app gui: {cvg_app_gui}")
         beAt = paragraph_app_gui.add_run(f"{cvg_app_gui}\n")
         beAt.font.size = Pt(10)
-        paragraph_app_gui.add_run("\nFor Run Workflow\n")
+        frwText = paragraph_app_gui.add_run("\nFor Run Workflow\n")
+        frwText.font.size = Pt(10)
+        frwText.bold = True
         paragraph_app_gui.add_run(f"{cvg_app_gui};")
            
     if has_common_deploy == "true":
         row6 = table.add_row()
         row6.cells[0].text = "PRD - CVG BE Common Deployment"
+        row6.cells[0].paragraphs[0].runs[0].font.bold = True
         row6.cells[1].text = "Y"
         row6.cells[1].paragraphs[0].runs[0].font.bold = True
         row6.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         row6.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
         paragraph_common = row6.cells[2].paragraphs[0]
-        paragraph_common.add_run("For Run Workflow")
+        frwText = paragraph_common.add_run("For Run Workflow")
+        frwText.font.size = Pt(10)
+        frwText.bold = True
 
 def main():
     dba_folders = glob.glob(f"./sprint/{tag}/*/DBA")
