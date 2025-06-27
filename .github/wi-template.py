@@ -183,6 +183,8 @@ def create_repo_table(doc, repos, has_common_deploy):
     merged_cell = row1.cells[0].merge(row1.cells[2])
     merged_cell.text = "WRXX-XXXXXX APP"
     merged_cell.paragraphs[0].runs[0].font.bold = True
+    merged_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    merged_cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     
     row2 = table.rows[1]
     row2.cells[0].text = "Pipeline"
@@ -220,10 +222,11 @@ def create_repo_table(doc, repos, has_common_deploy):
 
     paragraph_repos.add_run("\nFor Run Workflow\n")
     if cvg_app_gui:
-        filtered_apps = [item for item in apps_and_tags if not item.startswith("cvg_app_gui")]
-        repo = ";".join(filtered_apps) + ";"
         print(f"Updated repo without cvg_app_gui: {repo}")
-    paragraph_repos.add_run(f"{filtered_apps}")
+        filtered_apps = [item for item in apps_and_tags if not item.startswith("cvg-app-gui")]
+        repo = ";".join(filtered_apps) + ";"
+    else:
+        repo = repos
 
     if cvg_app_be:
         row4 = table.add_row()
