@@ -222,11 +222,12 @@ def create_repo_table(doc, repos, has_common_deploy):
 
     paragraph_repos.add_run("\nFor Run Workflow\n")
     if cvg_app_gui:
-        print(f"Updated repo without cvg_app_gui: {repo}")
         filtered_apps = [item for item in apps_and_tags if not item.startswith("cvg-app-gui")]
         repo = ";".join(filtered_apps) + ";"
+        print(f"Updated repo without cvg_app_gui: {repo}")
     else:
         repo = repos
+    paragraph_repos.add_run(f"{repo}")
 
     if cvg_app_be:
         row4 = table.add_row()
