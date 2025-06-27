@@ -1,0 +1,57 @@
+name: Generate Wi Template
+run-name: "Generate Wi Template : ${{ inputs.sprint }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sprint:
+        description: "Sprint name example: SPXX.X.X"
+        required: true
+      repository-deploy:
+        description: "Repository deploy version in sprint example: cvg-new-postpaid-sync:v2.0.0;cvg-atn:v2.0.0"
+        required: true
+      repository-rollback:
+        description: "Repository rollback version in sprint example: cvg-new-postpaid-sync:v1.0.0;cvg-atn:v1.0.0"
+        required: true
+      common-deploy:
+        description: 'Run CVG BE Common Deployment ?'
+        required: true
+        type: choice
+        options:
+          - yes
+          - no
+
+jobs:
+  create-wi:
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+    
+      - name: Create wi sprint name
+        run: echo "Create wi sprint name ${{inputs.sprint}}"
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+        
+      - name: Build WI Template
+        run: |
+          pip install python-docx
+          python .github/wi-template.py "${{ inputs.sprint }}" \
+                                        "${{ inputs.repository-deploy }}" \
+                                        "${{ inputs.repository-rollback }}" \
+                                        "${{ inputs.common-deploy }}"
+      
+      - name: Upload ${{inputs.sprint}} as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WI_GEN_${{inputs.sprint}}
+          path: |
+            wi-${{inputs.sprint}}.docx
+            sprint/${{inputs.sprint}}/
