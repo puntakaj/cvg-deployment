@@ -113,22 +113,22 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
 
     if repos_deploy:
         paragraph_repos = row2.cells[1].paragraphs[0]
-        title_bold = paragraph_repos.add_run("CVG Microservice")
+        title_bold = paragraph_repos.add_run("Microservice\n")
         title_bold.bold = True
         repos = [item.split(":")[0] for item in repos_deploy.split(";") if item]
         for repo_name in repos:
-            print(f"Adding repo: {repo_name}")
-            db = paragraph_repos.add_run(f"\n- {repo_name}")
+            print(f"Adding repo impact: {repo_name}")
+            db = paragraph_repos.add_run(f"- {repo_name}\n")
             db.font.size = Pt(10)
 
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
-        title_bold = paragraph_db.add_run("Database")
+        title_bold = paragraph_db.add_run("Database\n")
         title_bold.bold = True
-        paragraph_db.add_run("\nCONVGPROD")
+        paragraph_db.add_run("CONVGPROD\n")
         for file_name in files_impact:
-            print(f"Adding db: {file_name}")
-            db = paragraph_db.add_run(f"\n- {file_name}")
+            print(f"Adding db impact: {file_name}")
+            db = paragraph_db.add_run(f"- {file_name}\n")
             db.font.size = Pt(10)
 
 
@@ -169,6 +169,100 @@ def create_document_table(doc):
     row4.cells[3].text = ""
 
 
+def create_repo_table(doc, repos, has_common_deploy):
+    if not repos:
+        print("No repositories found")
+        return
+
+    cvg_app_be = ""
+    cvg_app_gui = ""
+    table = doc.add_table(rows=3, cols=3)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    merged_cell = row1.cells[0].merge(row1.cells[2])
+    merged_cell.text = "WRXX-XXXXXX APP"
+    merged_cell.paragraphs[0].runs[0].font.bold = True
+    
+    row2 = table.rows[1]
+    row2.cells[0].text = "Pipeline"
+    row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    row2.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row2.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row2.cells[1].text = "Run workflow"
+    row2.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row2.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row2.cells[1].paragraphs[0].runs[0].font.bold = True
+    row2.cells[2].text = "Tag"
+    row2.cells[2].paragraphs[0].runs[0].font.bold = True
+    row2.cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row2.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+    row3 = table.rows[2]
+    row3.cells[0].text = "PRD - Deploy Microservices"
+    row3.cells[1].text = "Y"
+    row3.cells[1].paragraphs[0].runs[0].font.bold = True
+    row3.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row3.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    paragraph_repos = row3.cells[2].paragraphs[0]
+    apps_and_tags = [item for item in repos.split(";") if item]
+    for app_and_tag in apps_and_tags:
+        print(f"Adding repo and tag: {app_and_tag}")
+        if app_and_tag.startswith("cvg-app-be"):
+            cvg_app_be = app_and_tag
+            aAt = paragraph_repos.add_run(f"{app_and_tag}\n")
+            aAt.font.size = Pt(10)
+        elif app_and_tag.startswith("cvg-app-gui"):
+            cvg_app_gui = app_and_tag
+        else:
+            aAt = paragraph_repos.add_run(f"{app_and_tag}\n")
+            aAt.font.size = Pt(10)
+
+    paragraph_repos.add_run("\nFor Run Workflow\n")
+    if cvg_app_gui:
+        filtered_apps = [item for item in apps_and_tags if not item.startswith("cvg_app_gui")]
+        repo = ";".join(filtered_apps) + ";"
+        print(f"Updated repo without cvg_app_gui: {repo}")
+    paragraph_repos.add_run(f"{filtered_apps}")
+
+    if cvg_app_be:
+        row4 = table.add_row()
+        row4.cells[0].text = "PRD - CVG BFF Deploy"
+        row4.cells[1].text = "Y"
+        row4.cells[1].paragraphs[0].runs[0].font.bold = True
+        row4.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        row4.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+        paragraph_app_be = row4.cells[2].paragraphs[0]
+        print(f"Adding repo and tag app be: {cvg_app_be}")
+        beAt = paragraph_app_be.add_run(f"{cvg_app_be}\n")
+        beAt.font.size = Pt(10)
+        paragraph_app_be.add_run("\nFor Run Workflow\n")
+        paragraph_app_be.add_run(f"{cvg_app_be.split(':')[1]};")
+
+    if cvg_app_gui:
+        row5 = table.add_row()
+        row5.cells[0].text = "PRD - CVG Frontend Deploy"
+        row5.cells[1].text = "Y"
+        row5.cells[1].paragraphs[0].runs[0].font.bold = True
+        row5.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        row5.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+        paragraph_app_gui = row5.cells[2].paragraphs[0]
+        print(f"Adding repo and tag app gui: {cvg_app_gui}")
+        beAt = paragraph_app_gui.add_run(f"{cvg_app_gui}\n")
+        beAt.font.size = Pt(10)
+        paragraph_app_gui.add_run("\nFor Run Workflow\n")
+        paragraph_app_gui.add_run(f"{cvg_app_gui};")
+           
+    if has_common_deploy == "true":
+        row6 = table.add_row()
+        row6.cells[0].text = "PRD - CVG BE Common Deployment"
+        row6.cells[1].text = "Y"
+        row6.cells[1].paragraphs[0].runs[0].font.bold = True
+        row6.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+        row6.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+        paragraph_common = row6.cells[2].paragraphs[0]
+        paragraph_common.add_run("For Run Workflow")
+
 def main():
     dba_folders = glob.glob(f"./sprint/{tag}/*/DBA")
     apo_folders = glob.glob(f"./sprint/{tag}/*/APO")
@@ -208,6 +302,14 @@ def main():
     if files_apo:
         doc.add_heading('Database - APO', level=2)
         create_sql_table(doc, "APO", files_apo)
+    
+    if repos_deploy:
+        doc.add_heading('Application - Operation', level=2)
+        create_repo_table(doc, repos_deploy, has_common_deploy)
+    
+    if repos_rollback:
+        doc.add_heading('Rollback', level=2)
+        create_repo_table(doc, repos_rollback, has_common_deploy)
 
     wi_filename = f"wi-{tag}.docx"
     doc.save(wi_filename)
