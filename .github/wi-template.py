@@ -65,8 +65,9 @@ def create_sql_table(doc, title, records):
     
     for filename in records:
         row = table.add_row()
-        row.cells[0].paragraphs[0].add_run(filename)
-        row.cells[0].size = Pt(10)
+        cell = row.cells[0]
+        run = cell.paragraphs[0].add_run(filename)
+        run.font.size = Pt(10)
 
 
 def combine_impact_db(combined_list):
@@ -313,12 +314,12 @@ def create_repo_table(doc, repos, has_common_deploy):
     row2.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
     row3 = table.rows[2]
-    row3.cells[0].text = "PRD - Deploy Microservices"
-    row3.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
-    row3.cells[0].paragraphs[0].runs[0].font.bold = True
-    row3.cells[1].text = "Y"
-    row3.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
-    row3.cells[1].paragraphs[0].runs[0].font.bold = True
+    row3cell0 = row3.cells[0].paragraphs[0].add_run("PRD - Deploy Microservices")
+    row3cell0.font.size = Pt(12)
+    row3cell0.font.bold = True
+    row3cell1 = row3.cells[1].paragraphs[0].add_run("Y")
+    row3cell1.font.size = Pt(12)
+    row3cell1.font.bold = True
     row3.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row3.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     paragraph_repos = row3.cells[2].paragraphs[0]
@@ -371,7 +372,7 @@ def create_repo_table(doc, repos, has_common_deploy):
         row5.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
         row5.cells[0].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].text = "Y"
-        row4.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
+        row5.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
         row5.cells[1].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         row5.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
