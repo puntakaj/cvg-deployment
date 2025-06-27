@@ -90,6 +90,51 @@ def clean_to_db(file_list):
     
     return db
 
+# create_impact_table
+def create_objective_table(doc, files_dba, files_apo, repos_deploy):
+    table = doc.add_table(rows=1, cols=3)
+    table.style = 'Table Grid'
+
+    row1 = table.rows[0]
+    row1.cells[0].text = "WR"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row1.cells[1].text = "Affected Module"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+    row1.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row1.cells[2].text = "Description"
+    row1.cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[2].paragraphs[0].runs[0].font.bold = True
+    row1.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
+
+    if files_dba:
+        row = table.add_row()
+        row.cells[1].text = "Database\n- CONVGPROD"
+        row.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
+        row.cells[2].text = "เพื่อทำการเพิ่ม structure table"
+        row.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
+    
+    if files_apo:
+        row = table.add_row()
+        row.cells[1].text = "Database\n- CONVGPROD"
+        row.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
+        row.cells[2].text = "เพื่อทำการเพิ่ม data ในส่วนของ Master Config"
+        row.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
+
+    if repos_deploy:
+        row = table.add_row()
+        row.cells[1].text = "OpenShift\n- cvg-microservice"
+        row.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
+        row.cells[2].text = "เพื่อทำการเพิ่ม Feature การทำงานให้รองรับตาม Requirement"
+        row.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
+
 
 # create_impact_table
 def create_impact_table(doc,sir_name,files_impact,repos_deploy):
@@ -101,20 +146,24 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
     row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
 
     row1.cells[1].text = "Impact"
     row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     row1.cells[1].paragraphs[0].runs[0].font.bold = True
+    row1.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
 
     row2 = table.rows[1]
     row2.cells[0].text = sir_name
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    row2.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
 
     if repos_deploy:
         paragraph_repos = row2.cells[1].paragraphs[0]
-        title_bold = paragraph_repos.add_run("Microservice\n")
-        title_bold.bold = True
+        title_micro = paragraph_repos.add_run("Microservice\n")
+        title_micro.size = Pt(12)
+        title_micro.bold = True
         repos = [item.split(":")[0] for item in repos_deploy.split(";") if item]
         for repo_name in repos:
             print(f"Adding repo impact: {repo_name}")
@@ -124,14 +173,61 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
 
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
-        title_bold = paragraph_db.add_run("Database\n")
-        title_bold.bold = True
-        paragraph_db.add_run("CONVGPROD\n")
+        title_db = paragraph_db.add_run("Database\n")
+        title_db.bold = True
+        title_db.size = Pt(12)
+        title_db_name = paragraph_db.add_run("CONVGPROD\n")
+        title_db_name.size = Pt(10)
         for file_name in files_impact:
             print(f"Adding db impact: {file_name}")
             db = paragraph_db.add_run(f"- {file_name}\n")
             db.font.size = Pt(10)
 
+
+#create_destination_system_table
+def create_destination_system_table(repos_deploy):
+    table = doc.add_table(rows=2, cols=2)
+    table.style = 'Table Grid'
+    
+    row1 = table.rows[0]
+    row1.cells[0].text = "Server Name"
+    row1.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[0].paragraphs[0].runs[0].font.bold = True
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row1.cells[1].text = "Database"
+    row1.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[1].paragraphs[0].runs[0].font.bold = True
+    row1.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row1.cells[2].text = "Domain"
+    row1.cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[2].paragraphs[0].runs[0].font.bold = True
+    row1.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row1.cells[3].text = "PCR / UR"
+    row1.cells[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    row1.cells[3].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row1.cells[3].paragraphs[0].runs[0].font.bold = True
+    row1.cells[3].paragraphs[0].runs[0].font.size = Pt(12)
+
+    row2 = table.rows[1]
+    row2.cells[0].text = "OpenShift\n- cvg-microservice "
+    row2.cells[0].paragraphs[0].runs[0].font.size = Pt(10)
+
+    row2.cells[1].text = "PCONVGLSTN.lisa.org\n- CONVGPROD "
+    row2.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
+
+    paragraph_domain = row2.cells[2].paragraphs[0]
+    paragraph_domain.add_run("cvg-prod.intra.ais")
+
+    if 'cvg-app-be' in repos_deploy or 'cvg-ap-gui' in repos_deploy:
+        paragraph_domain.add_run("\ncvg-portal.intra.ais")
+    row2.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
+    
 
 # create_document_table
 def create_document_table(doc):
@@ -141,35 +237,46 @@ def create_document_table(doc):
     row1 = table.rows[0]
     row1.cells[0].text = "Document name :"
     row1.cells[0].paragraphs[0].runs[0].font.bold = True
-    row1.cells[2].text = "WI_Convergence_YYYY-MM-DD.docx"
-    row1.cells[0].merge(row1.cells[1])
-    row1.cells[2].merge(row1.cells[3])
+    row1.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
+    merged_cell = row1.cells[1].merge(row1.cells[3])
+    merged_cell.paragraphs[0].add_run("WI_Convergence_YYYY-MM-DD.docx")
+    merged_cell.paragraphs[0].runs[0].font.size = Pt(12)
     
     row2 = table.rows[1]
     row2.cells[0].text = "Created by :"
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    row2.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
     row2.cells[1].text = ""
     row2.cells[2].text = "Created Date :"
     row2.cells[2].paragraphs[0].runs[0].font.bold = True
+    row2.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
     row2.cells[3].text = "DD/MM/YYYY"
+    row2.cells[3].paragraphs[0].runs[0].font.size = Pt(12)
     
     row3 = table.rows[2]
     row3.cells[0].text = "Company :"
     row3.cells[0].paragraphs[0].runs[0].font.bold = True
+    row3.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
     row3.cells[1].text = "MIMO Tech."
+    row3.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
     row3.cells[2].text = "Department :"
+    row3.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
     row3.cells[2].paragraphs[0].runs[0].font.bold = True
     row3.cells[3].text = "BAIC"
+    row3.cells[3].paragraphs[0].runs[0].font.size = Pt(12)
     
     row4 = table.rows[3]
     row4.cells[0].text = "On Production Date :"
+    row4.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
     row4.cells[0].paragraphs[0].runs[0].font.bold = True
     row4.cells[1].text = "DD/MM/YYYY"
+    row4.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
     row4.cells[2].text = "Telephone :"
+    row4.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
     row4.cells[2].paragraphs[0].runs[0].font.bold = True
     row4.cells[3].text = ""
 
-
+#create micoerserive deploy and rollback table
 def create_repo_table(doc, repos, has_common_deploy):
     if not repos:
         print("No repositories found")
@@ -184,27 +291,33 @@ def create_repo_table(doc, repos, has_common_deploy):
     merged_cell = row1.cells[0].merge(row1.cells[2])
     merged_cell.text = "APP"
     merged_cell.paragraphs[0].runs[0].font.bold = True
+    merged_cell.paragraphs[0].runs[0].font.size = Pt(12)
     merged_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     merged_cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     
     row2 = table.rows[1]
     row2.cells[0].text = "Pipeline"
     row2.cells[0].paragraphs[0].runs[0].font.bold = True
+    row2.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
     row2.cells[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row2.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     row2.cells[1].text = "Run workflow"
     row2.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row2.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+    row2.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
     row2.cells[1].paragraphs[0].runs[0].font.bold = True
     row2.cells[2].text = "Tag"
+    row2.cells[2].paragraphs[0].runs[0].font.size = Pt(12)
     row2.cells[2].paragraphs[0].runs[0].font.bold = True
     row2.cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row2.cells[2].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
     row3 = table.rows[2]
     row3.cells[0].text = "PRD - Deploy Microservices"
+    row3.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
     row3.cells[0].paragraphs[0].runs[0].font.bold = True
     row3.cells[1].text = "Y"
+    row3.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
     row3.cells[1].paragraphs[0].runs[0].font.bold = True
     row3.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     row3.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
@@ -236,8 +349,10 @@ def create_repo_table(doc, repos, has_common_deploy):
     if cvg_app_be:
         row4 = table.add_row()
         row4.cells[0].text = "PRD - CVG BFF Deploy"
+        row4.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
         row4.cells[0].paragraphs[0].runs[0].font.bold = True
         row4.cells[1].text = "Y"
+        row4.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
         row4.cells[1].paragraphs[0].runs[0].font.bold = True
         row4.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         row4.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
@@ -253,8 +368,10 @@ def create_repo_table(doc, repos, has_common_deploy):
     if cvg_app_gui:
         row5 = table.add_row()
         row5.cells[0].text = "PRD - CVG Frontend Deploy"
+        row5.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
         row5.cells[0].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].text = "Y"
+        row4.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
         row5.cells[1].paragraphs[0].runs[0].font.bold = True
         row5.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         row5.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
@@ -270,8 +387,10 @@ def create_repo_table(doc, repos, has_common_deploy):
     if has_common_deploy == "true":
         row6 = table.add_row()
         row6.cells[0].text = "PRD - CVG BE Common Deployment"
+        row6.cells[0].paragraphs[0].runs[0].font.size = Pt(12)
         row6.cells[0].paragraphs[0].runs[0].font.bold = True
         row6.cells[1].text = "Y"
+        row6.cells[1].paragraphs[0].runs[0].font.size = Pt(12)
         row6.cells[1].paragraphs[0].runs[0].font.bold = True
         row6.cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         row6.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
@@ -309,8 +428,14 @@ def main():
 
     files_impact = combine_impact_db(files_dba + files_apo)
 
+    doc.add_heading('Objective', level=2)
+    create_objective_table(doc, files_dba, files_apo, repos_deploy)
+
     doc.add_heading('Impact', level=2)
     create_impact_table(doc,sir_name,files_impact,repos_deploy)
+
+    doc.add_heading('Destination System', level=2)
+    create_destination_system_table(repos_deploy)
 
     if files_dba:
         doc.add_heading('Database - DBA', level=2)
