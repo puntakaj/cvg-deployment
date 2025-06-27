@@ -41,7 +41,7 @@ def read_all_files(folder_path):
 
 # create_sql_table
 def create_sql_table(doc, title, records):
-    table = doc.add_table(rows=3, cols=2)
+    table = doc.add_table(rows=2, cols=2)
     table.style = 'Table Grid'
     
     hdr_cells = table.rows[0].cells
@@ -64,8 +64,8 @@ def create_sql_table(doc, title, records):
     row1.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
     
     for filename in records:
-        data_cells = table.rows[2].cells
-        data_cells[0].text = '\n'.join(records)
+        data_cells = table.add_row()
+        data_cells[0].text = filename
         data_cells[0].paragraphs[0].runs[0].font.size = Pt(10)
 
 
@@ -118,8 +118,9 @@ def create_impact_table(doc,sir_name,files_impact,repos_deploy):
         repos = [item.split(":")[0] for item in repos_deploy.split(";") if item]
         for repo_name in repos:
             print(f"Adding repo impact: {repo_name}")
-            db = paragraph_repos.add_run(f"- {repo_name}\n")
-            db.font.size = Pt(10)
+            repo = paragraph_repos.add_run(f"- {repo_name}\n")
+            repo.font.size = Pt(10)
+        paragraph_repos.add_run("\n")
 
     if files_impact and len(files_impact) > 0:
         paragraph_db = row2.cells[1].paragraphs[0]
@@ -181,7 +182,7 @@ def create_repo_table(doc, repos, has_common_deploy):
     
     row1 = table.rows[0]
     merged_cell = row1.cells[0].merge(row1.cells[2])
-    merged_cell.text = "WRXX-XXXXXX APP"
+    merged_cell.text = "APP"
     merged_cell.paragraphs[0].runs[0].font.bold = True
     merged_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     merged_cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
