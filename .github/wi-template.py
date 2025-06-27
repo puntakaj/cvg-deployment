@@ -222,11 +222,11 @@ def create_destination_system_table(repos_deploy):
     row2.cells[1].paragraphs[0].runs[0].font.size = Pt(10)
 
     paragraph_domain = row2.cells[2].paragraphs[0]
-    paragraph_domain.add_run("cvg-prod.intra.ais")
-
-    if 'cvg-app-be' in repos_deploy or 'cvg-ap-gui' in repos_deploy:
-        paragraph_domain.add_run("\ncvg-portal.intra.ais")
-    row2.cells[2].paragraphs[0].runs[0].font.size = Pt(10)
+    domain_run = paragraph_domain.add_run("cvg-prod.intra.ais")
+    domain_run.font.size = Pt(10)
+    if 'cvg-app-be' in repos_deploy or 'cvg-app-gui' in repos_deploy:
+        extra_run = paragraph_domain.add_run("\ncvg-portal.intra.ais")
+        extra_run.font.size = Pt(10)
 
 
 # create_document_table
