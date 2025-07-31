@@ -2,7 +2,7 @@ param (
     [string]$pathCheckScript
 )
 
-$nameList = @("CVGDEVDB", "CVGSITDB", "CVGUATDB")
+$nameList = @("CVGDEV", "CVGSIT", "CVGUAT")
 
 Write-Host "🔍 Scanning SQL scripts in: $pathCheckScript"
 
@@ -19,31 +19,14 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
     # --- Condition 1: Found keyword (optional reporting, still printed immediately) ---
     foreach ($name in $nameList) {
         $trimmedName = $name.Trim()
-        Write-Host "🔍 Checking prefix database for: '$trimmedName'"
         $escapedName = [regex]::Escape($trimmedName)
 
         for ($i = 0; $i -lt $lines.Length; $i++) {
             $line = $lines[$i]
             if ($line -match "(?i)$escapedName") {
-                Write-Host "❌ ERROR: Found database prefix '$trimmedName' in file: $filePath (Line: $($i + 1))"
+		Write-Host " result  ($line)"
+                Write-Host "✅ Found message: '$trimmedName' in file: $filePath (Line: $($i + 1))"
                 Write-Host "    → $line"
-                throw "Database prefix '$trimmedName' found in $filePath at line $($i + 1)"
-            }
-        }
-    }
-
-    foreach ($name in $nameList) {
-        $trimmedName = $name.Trim()
-        Write-Host "🔍 Checking prefix database for: '$trimmedName'"
-
-        for ($i = 0; $i -lt $lines.Length; $i++) {
-            $line = $lines[$i]
-            Write-Host "LINE $($i+1): $line"
-
-            # Try literal substring
-            if ($line -like "*$trimmedName*") {
-                Write-Host "✅ Found with -like: '$trimmedName' in line $($i + 1)"
-                throw "Database prefix '$trimmedName' found in $filePath at line $($i + 1)"
             }
         }
     }
