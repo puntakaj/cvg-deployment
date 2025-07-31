@@ -2,7 +2,7 @@ param (
     [string]$pathCheckScript
 )
 
-$nameList = @("CVGDEV", "CVGSIT", "CVGUAT")
+$nameList = @("CVGDEVDB", "CVGSITDB", "CVGUATDB")
 
 Write-Host "🔍 Scanning SQL scripts in: $pathCheckScript"
 
@@ -18,6 +18,7 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
     # --- Condition 1: Found keyword (optional reporting, still printed immediately) ---
     foreach ($name in $nameList) {
         $trimmedName = $name.Trim()
+        Write-Host "🔍 xxxx: $trimmedName"
         $escapedName = [regex]::Escape($trimmedName)
 
         for ($i = 0; $i -lt $lines.Length; $i++) {
