@@ -30,7 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
       
       - name: Check tag exists
         run: |
@@ -50,7 +50,7 @@ jobs:
       - name: Verify sql scripts
         shell: pwsh
         run: |
-          .github/verify-script-sql.ps1 -pathCheckScript "./sprint/${{inputs.tag}}/*"
+          ./github/verify-script-sql.ps1 -pathCheckScript "./sprint/${{inputs.tag}}/*"
 
       - name: Setup python
         uses: actions/setup-python@v4
