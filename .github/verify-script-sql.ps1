@@ -24,9 +24,9 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
         for ($i = 0; $i -lt $lines.Length; $i++) {
             $line = $lines[$i]
             if ($line -match "(?i)$escapedName") {
-		Write-Host " result  ($line)"
                 Write-Host "✅ Found message: '$trimmedName' in file: $filePath (Line: $($i + 1))"
                 Write-Host "    → $line"
+                $errors += "[{0}] ❌ Incorrect prefix database (Line {1}): {2}" -f ($errors.Count + 1), ($i + 1), $line.Trim()
             }
         }
     }
@@ -78,5 +78,6 @@ for ($i = 0; $i -lt $lines.Length; $i++) {
         Write-Host "❗ SCRIPT ERROR: $filePath"
         $errors | ForEach-Object { Write-Host $_ }
         Write-Host "`n"
+        throw "❌ Found $($errors.Count) error(s): $errors"
     }
 }
