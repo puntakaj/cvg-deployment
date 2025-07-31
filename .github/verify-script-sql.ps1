@@ -10,6 +10,7 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
     Write-Host "📄 Found SQL: $($_.FullName)"
     $filePath = $_.FullName
     $lines = Get-Content $filePath
+    Write-Host "First line: $($lines[0])"
     $errors = @()
     $hasCreateTable = $false
     $hasAdminRole = $false
@@ -22,6 +23,7 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
         $escapedName = [regex]::Escape($trimmedName)
 
         for ($i = 0; $i -lt $lines.Length; $i++) {
+            Write-Host "🔍 TEST"
             $line = $lines[$i]
             if ($line -match "(?i)$escapedName") {
                 Write-Host "✅ Found message: '$trimmedName' in file: $filePath (Line: $($i + 1))"
