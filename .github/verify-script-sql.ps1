@@ -23,7 +23,7 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
 
         for ($i = 0; $i -lt $lines.Length; $i++) {
             $line = $lines[$i]
-            if ($line -match "(?i)$escapedName") {
+            if ($line -match "(?i)\b$trimmedName\b") {
                 Write-Host "❌ ERROR: Found database prefix '$trimmedName' in file: $filePath (Line: $($i + 1))"
                 Write-Host "    → $line"
                 throw "Database prefix '$trimmedName' found in $filePath at line $($i + 1)"
