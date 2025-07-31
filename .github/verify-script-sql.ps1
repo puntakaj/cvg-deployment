@@ -9,7 +9,8 @@ Write-Host "🔍 Scanning SQL scripts in: $pathCheckScript"
 Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Object {
     $filePath = $_.FullName
     Write-Host "📄 Found SQL: '$filePath'"
-    $lines = Get-Content $filePath
+    $lines = Get-Content -Path $filePath -Encoding UTF8
+    $lines | ForEach-Object { Write-Host "LINE >> $_" }
     $errors = @()
     $hasCreateTable = $false
     $hasAdminRole = $false
