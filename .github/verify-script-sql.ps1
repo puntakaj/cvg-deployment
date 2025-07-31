@@ -5,7 +5,7 @@ param (
 $nameList = @("CVGDEV", "CVGSIT", "CVGUAT")
 
 Write-Host "TESTING SQL SCRIPTS IN: $pathCheckScript"
-Get-ChildItem -Path $pathCheckScript -Filter *.sql | ForEach-Object {
+Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Object {
     $filePath = $_.FullName
     $lines = Get-Content $filePath
     $errors = @()
