@@ -7,10 +7,9 @@ $nameList = @("CVGDEVDB", "CVGSITDB", "CVGUATDB")
 Write-Host "🔍 Scanning SQL scripts in: $pathCheckScript"
 
 Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Object {
-    Write-Host "📄 Found SQL: $($_.FullName)"
     $filePath = $_.FullName
+    Write-Host "📄 Found SQL: '$filePath'"
     $lines = Get-Content $filePath
-    Write-Host "First line: $($lines[0])"
     $errors = @()
     $hasCreateTable = $false
     $hasAdminRole = $false
@@ -19,15 +18,15 @@ Get-ChildItem -Path $pathCheckScript -Filter *.sql -Recurse -File | ForEach-Obje
     # --- Condition 1: Found keyword (optional reporting, still printed immediately) ---
     foreach ($name in $nameList) {
         $trimmedName = $name.Trim()
-        Write-Host "🔍 xxxx: $trimmedName"
+        Write-Host "🔍 Checking prefix database for: '$trimmedName'"
         $escapedName = [regex]::Escape($trimmedName)
 
         for ($i = 0; $i -lt $lines.Length; $i++) {
-            Write-Host "🔍 TEST"
             $line = $lines[$i]
             if ($line -match "(?i)$escapedName") {
-                Write-Host "✅ Found message: '$trimmedName' in file: $filePath (Line: $($i + 1))"
+                Write-Host "❌ ERROR: Found database prefix '$trimmedName' in file: $filePath (Line: $($i + 1))"
                 Write-Host "    → $line"
+                throw "Database prefix '$trimmedName' found in $filePath at line $($i + 1)"
             }
         }
     }
