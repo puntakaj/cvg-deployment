@@ -1,5 +1,4 @@
 
-# .github/workflows/semantic-pr-title.yml
 name: Semantic PR title
 
 on:
@@ -34,7 +33,7 @@ jobs:
             ci
             chore
             revert
-          requireScope: false
+          requireScope: true
           subjectPattern: ^.+$
-          subjectPatternError: "Subject must not be empty (use: type(scope?): short description)"
+          subjectPatternError: "Subject must not be empty example: type(feature): some subject description"
           validateSingleCommit: false
