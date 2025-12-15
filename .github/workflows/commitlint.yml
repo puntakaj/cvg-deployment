@@ -1,0 +1,55 @@
+
+name: Commit message lint
+
+on:
+  # รันบนทุก pull request (ทุก branch) แต่จะมีเงื่อนไขใน job ว่าต้องเป็น PR ไป main
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+
+jobs:
+  commitlint:
+    # ✅ ตรวจเฉพาะ PR ที่จะ merge เข้า main
+    if: github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # ดึง history ครบ เพื่อให้หา commit range ได้
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install commitlint
+        run: npm i -D @commitlint/cli @commitlint/config-conventional
+
+      - name: Provide commitlint config
+        # สร้างไฟล์ commitlint.config.js ใน CI (หรือจะใส่ไฟล์นี้ใน repo ก็ได้)
+        run: |
+          cat > commitlint.config.js <<'EOF'
+          export default {
+            extends: ['@commitlint/config-conventional'],
+            rules: {
+              // อนุญาตเฉพาะ type ที่กำหนด
+              'type-enum': [2, 'always', [
+                'feat','fix','docs','style','refactor',
+                'perf','test','build','ci','chore','revert'
+              ]],
+              // ต้องมี subject (ห้ามเว้นว่าง)
+              'subject-empty': [2, 'never'],
+              // ตัวเลือกอื่น ๆ ที่เข้มขึ้นได้ เช่น จำกัดความยาว subject ฯลฯ
+              // 'subject-max-length': [2, 'always', 100],
+            },
+          };
+          EOF
+
+      - name: Lint commits in this PR (base.sha → head.sha)
+        # ใช้ SHA ต้น–ปลายของ PR โดยตรง (เสถียร และรองรับ PR จาก fork)
+        run: |
+          FROM="${{ github.event.pull_request.base.sha }}"
+          TO="${{ github.event.pull_request.head.sha }}"
+          echo "Linting commits from $FROM to $TO"
+          npx commitlint --from "$FROM" --to "$TO"
